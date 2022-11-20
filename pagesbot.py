@@ -9,10 +9,12 @@ from wikibaseintegrator.datatypes import Quantity, Item
 
 CONSUMER_TOKEN = '00000000000000000000000000000000'
 CONSUMER_SECRET = '0000000000000000000000000000000000000000'
+USERNAME = ''
+PASSWORD = ''
 
 wbi_config['USER_AGENT'] = 'PagesBot/1.0 (https://www.wikidata.org/wiki/User:PagesBot)'
-login_instance = wbi_login.Login(consumer_token=CONSUMER_TOKEN, consumer_secret=CONSUMER_SECRET)
-#login_instance = wbi_login.Login(auth_method='clientlogin', user=USERNAME, password=PASSWORD)
+login_instance = wbi_login.OAuth2(consumer_token=CONSUMER_TOKEN, consumer_secret=CONSUMER_SECRET)
+#login_instance = wbi_login.Clientlogin(user='USERNAME', password='PASSWORD')
 
 wbi = WikibaseIntegrator(login=login_instance)  # is_bot=True
 
