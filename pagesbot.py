@@ -61,16 +61,18 @@ elif not page_range_str:
 
 else:
     number_of_pages = infer_pages(page_range_str)
-    print(item.id + ': inferred {} pages from "{}"'.format(number_of_pages, page_range_str))
 
-    number_of_pages_statement = Quantity(prop_nr='P1104',
-                                         amount=number_of_pages,
-                                         unit='Q1069725',
-                                         references=[Item(prop_nr="P887", value='Q110768064')])
+    if number_of_pages != 0:
+        print(item.id + ': inferred {} pages from "{}"'.format(number_of_pages, page_range_str))
 
-    summary = 'Inferred [[Property:P1104]]: {} from [[Property:P304]]: "{}"'\
-              .format(number_of_pages, page_range_str)
+        number_of_pages_statement = Quantity(prop_nr='P1104',
+                                             amount=number_of_pages,
+                                             unit='Q1069725',
+                                             references=[Item(prop_nr="P887", value='Q110768064')])
 
-    # Add the statement to the item
-    item.claims.add([number_of_pages_statement])
-    item.write(summary=summary)
+        summary = 'Inferred [[Property:P1104]]: {} from [[Property:P304]]: "{}"'\
+                  .format(number_of_pages, page_range_str)
+
+        # Add the statement to the item
+        item.claims.add([number_of_pages_statement])
+        item.write(summary=summary)
