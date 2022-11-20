@@ -41,10 +41,23 @@ def get_number_of_pages(wbi_item):
 
 def infer_pages(page_range_str):
     # Infer the number of pages from the range
-    range_re = re.match(r'^(\d*)\s*(-|‐|‑|‒|–|—|―|−)\s*(\d*)$', page_range_str)
-    first_page_num = int(range_re.group(1))
-    last_page_num = int(range_re.group(3))
-    return last_page_num - first_page_num + 1
+    range_re = re.match(r'^([a-zA-Z]*)(\d*)\s*(-|‐|‑|‒|–|—|―|−)\s*([a-zA-Z]*)(\d*)$', page_range_str)
+
+    try:
+        first_page_char = range_re.group(1)
+        first_page_num = int(range_re.group(2))
+        hyphen_char = range_re.group(3)
+        last_page_char = range_re.group(4)
+        last_page_num = int(range_re.group(5))
+    except AttributeError:
+        return 0
+
+    # Allow prepended characters, but only where the letters do not differ
+    # A1-2 is okay, A1-B2 is ambiguous so should be looked at by a human
+    if first_page_char != last_page_char:
+        return 0
+
+    return number_of_pages
 
 
 # Get the item to work on
