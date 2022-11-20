@@ -57,6 +57,13 @@ def infer_pages(page_range_str):
     if first_page_char != last_page_char:
         return 0
 
+    # Allow ranges where the second number is only made up of the digits that change
+    # 100-4 is the same as 100-104
+    if last_page_num < first_page_num:
+        number_of_pages = (first_page_num + last_page_num) - first_page_num
+    else:
+        number_of_pages = last_page_num - first_page_num + 1
+
     return number_of_pages
 
 
