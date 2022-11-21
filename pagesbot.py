@@ -20,17 +20,23 @@ wbi = WikibaseIntegrator(login=login_instance)  # is_bot=True
 
 
 def get_page_range_str(wbi_item):
-    # Try to get the pages() (P304) statement
+    # Try to get the page(s) (P304) statement
     try:
+        wbi_item.get_json()['claims']['P304']
+    except KeyError:
+        print(wbi_item.id + ': no page(s) (P304) statements present')
+        return
+
+    if len(wbi_item.get_json()['claims']['P304']) > 1:
+        print(wbi_item.id + ': aborting, more than one page(s) (P304) statements present')
+        return
+    else:
         page_range_str = wbi_item.get_json()['claims']['P304'][0]['mainsnak']['datavalue']['value']
         return page_range_str
 
-    except KeyError:
-        return
-
 
 def get_number_of_pages(wbi_item):
-    # Try to get the number of pages (P1104) statement
+    # Try to get a number of pages (P1104) statement
     try:
         pages = int(wbi_item.get_json()['claims']['P1104'][0]['mainsnak']['datavalue']['value']['amount'])
         return pages
@@ -77,7 +83,7 @@ if existing_number_of_pages:
     print(item.id + ': number of pages (P1104) statement is already present')
 
 elif not page_range_str:
-    print(item.id + ': pages() (P304) statement is not present')
+    pass
 
 else:
     number_of_pages = infer_pages(page_range_str)
