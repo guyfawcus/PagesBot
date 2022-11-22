@@ -83,10 +83,7 @@ def parse_item(qid, write_changes=True):
     if existing_number_of_pages:
         print(item.id + ': number of pages (P1104) statement is already present')
 
-    elif not page_range_str:
-        pass
-
-    else:
+    elif page_range_str:
         number_of_pages = infer_pages(page_range_str)
 
         if number_of_pages != 0:
