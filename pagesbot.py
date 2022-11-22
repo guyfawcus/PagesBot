@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import re
 
 from wikibaseintegrator import WikibaseIntegrator, wbi_login
@@ -7,14 +8,24 @@ from wikibaseintegrator.wbi_config import config as wbi_config
 from wikibaseintegrator.datatypes import Quantity, Item
 
 
-CONSUMER_TOKEN = '00000000000000000000000000000000'
-CONSUMER_SECRET = '0000000000000000000000000000000000000000'
+CONSUMER_TOKEN = ''
+CONSUMER_SECRET = ''
 USERNAME = ''
 PASSWORD = ''
 
 wbi_config['USER_AGENT'] = 'PagesBot/1.0 (https://www.wikidata.org/wiki/User:PagesBot)'
-login_instance = wbi_login.OAuth2(consumer_token=CONSUMER_TOKEN, consumer_secret=CONSUMER_SECRET)
-#login_instance = wbi_login.Clientlogin(user='USERNAME', password='PASSWORD')
+
+try:
+    if CONSUMER_TOKEN and CONSUMER_SECRET:
+        login_instance = wbi_login.OAuth2(consumer_token=CONSUMER_TOKEN, consumer_secret=CONSUMER_SECRET)
+    elif USERNAME and PASSWORD:
+        login_instance = wbi_login.Clientlogin(user=USERNAME, password=PASSWORD)
+    else:
+        print('Please supply a token and secret, or a username and password')
+        sys.exit()
+except wbi_login.LoginError as error_msg:
+    print(error_msg)
+    sys.exit()
 
 wbi = WikibaseIntegrator(login=login_instance)  # is_bot=True
 
