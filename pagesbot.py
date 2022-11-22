@@ -72,8 +72,9 @@ def infer_pages(page_range_str, qid='Q?'):
 
     # Allow prepended characters, but only where the letters do not differ
     # A1-2 is okay, A1-B2 is ambiguous so should be looked at by a human
-    if first_page_char != last_page_char:
-        return 0
+    if (last_page_char != '') and (last_page_char != first_page_char):
+        print(qid + ': Bad number of pages (P1104) statement, ambiguous range')
+        return
 
     # Allow ranges where the second number is only made up of the digits that change
     # 100-4 is the same as 100-104
