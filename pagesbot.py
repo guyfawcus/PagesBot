@@ -56,18 +56,19 @@ def get_number_of_pages(wbi_item):
         return
 
 
-def infer_pages(page_range_str):
+def infer_pages(page_range_str, qid='Q?'):
     # Infer the number of pages from the range
-    range_re = re.match(r'^([a-zA-Z]*)(\d*)\s*(-|‐|‑|‒|–|—|―|−)\s*([a-zA-Z]*)(\d*)$', page_range_str)
+    range_re = re.match(r'^([a-zA-Z]*)(\d+)\s*(-|‐|‑|‒|–|—|―|−)\s*([a-zA-Z]*)(\d+)$', page_range_str)
 
-    try:
-        first_page_char = range_re.group(1)
-        first_page_num = int(range_re.group(2))
-        hyphen_char = range_re.group(3)
-        last_page_char = range_re.group(4)
-        last_page_num = int(range_re.group(5))
-    except AttributeError:
-        return 0
+    if not range_re:
+        print(qid + ': Bad number of pages (P1104) statement, does not match regex')
+        return
+
+    first_page_char = range_re.group(1)
+    first_page_num = int(range_re.group(2))
+    hyphen_char = range_re.group(3)
+    last_page_char = range_re.group(4)
+    last_page_num = int(range_re.group(5))
 
     # Allow prepended characters, but only where the letters do not differ
     # A1-2 is okay, A1-B2 is ambiguous so should be looked at by a human
@@ -95,9 +96,9 @@ def parse_item(qid, write_changes=True):
         print(item.id + ': number of pages (P1104) statement is already present')
 
     elif page_range_str:
-        number_of_pages = infer_pages(page_range_str)
+        number_of_pages = infer_pages(page_range_str, qid)
 
-        if number_of_pages != 0:
+        if number_of_pages:
             print(item.id + ': inferred {} pages from "{}"'.format(number_of_pages, page_range_str))
 
             number_of_pages_statement = Quantity(prop_nr='P1104',
