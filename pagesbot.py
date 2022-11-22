@@ -73,32 +73,39 @@ def infer_pages(page_range_str):
     return number_of_pages
 
 
-# Get the item to work on
-item = wbi.item.get(entity_id='Q4115189')
+def parse_item(qid, write_changes=True):
+    # Get the item to work on
+    item = wbi.item.get(entity_id=qid)
 
-existing_number_of_pages = get_number_of_pages(item)
-page_range_str = get_page_range_str(item)
+    existing_number_of_pages = get_number_of_pages(item)
+    page_range_str = get_page_range_str(item)
 
-if existing_number_of_pages:
-    print(item.id + ': number of pages (P1104) statement is already present')
+    if existing_number_of_pages:
+        print(item.id + ': number of pages (P1104) statement is already present')
 
-elif not page_range_str:
-    pass
+    elif not page_range_str:
+        pass
 
-else:
-    number_of_pages = infer_pages(page_range_str)
+    else:
+        number_of_pages = infer_pages(page_range_str)
 
-    if number_of_pages != 0:
-        print(item.id + ': inferred {} pages from "{}"'.format(number_of_pages, page_range_str))
+        if number_of_pages != 0:
+            print(item.id + ': inferred {} pages from "{}"'.format(number_of_pages, page_range_str))
 
-        number_of_pages_statement = Quantity(prop_nr='P1104',
-                                             amount=number_of_pages,
-                                             unit='Q1069725',
-                                             references=[Item(prop_nr="P887", value='Q110768064')])
+            number_of_pages_statement = Quantity(prop_nr='P1104',
+                                                 amount=number_of_pages,
+                                                 unit='Q1069725',
+                                                 references=[Item(prop_nr="P887", value='Q110768064')])
 
-        summary = 'Inferred [[Property:P1104]]: {} from [[Property:P304]]: "{}"'\
-                  .format(number_of_pages, page_range_str)
+            summary = 'Inferred [[Property:P1104]]: {} from [[Property:P304]]: "{}"'\
+                      .format(number_of_pages, page_range_str)
 
-        # Add the statement to the item
-        item.claims.add([number_of_pages_statement])
-        item.write(summary=summary)
+            if write_changes == True:
+                # Add the statement to the item
+                item.claims.add([number_of_pages_statement])
+                item.write(summary=summary)
+
+
+if __name__ == '__main__':
+    sandbox_qid = 'Q4115189'
+    parse_item(sandbox_qid, write_changes=False)
