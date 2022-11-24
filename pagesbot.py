@@ -3,7 +3,7 @@
 import sys
 import re
 
-from wikibaseintegrator import WikibaseIntegrator, wbi_login
+from wikibaseintegrator import WikibaseIntegrator, wbi_login, wbi_exceptions
 from wikibaseintegrator.wbi_config import config as wbi_config
 from wikibaseintegrator.datatypes import Quantity, Item
 
@@ -113,7 +113,10 @@ def parse_item(qid, write_changes=True):
             if write_changes == True:
                 # Add the statement to the item
                 item.claims.add([number_of_pages_statement])
-                item.write(summary=summary)
+                try:
+                    item.write(summary=summary)
+                except wbi_exceptions.MWApiError as error_msg:
+                    print(item.id + ': API error, the item may be too large')
 
 
 if __name__ == '__main__':
